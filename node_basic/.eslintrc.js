@@ -4,12 +4,7 @@ module.exports = {
 		commonjs: true,
 		es2021: true,
 	},
-	extends: [
-		'airbnb-base',
-		'prettier',
-		'plugin:prettier/recommended',
-		'plugin:node/recommended',
-	],
+	extends: ['airbnb-base', 'prettier', 'plugin:prettier/recommended', 'plugin:node/recommended'],
 	parserOptions: {
 		ecmaVersion: 12,
 	},
@@ -34,6 +29,7 @@ module.exports = {
 				useTabs: true,
 				endOfLine: 'auto',
 				bracketSpacing: true,
+				printWidth: 120,
 			},
 		],
 	},
