@@ -1,14 +1,26 @@
 {
-  "name": "natours",
-  "version": "1.0.0",
-  "description": "Learn Express and MongoDB",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.2"
-  }
+	"name": "natours",
+	"version": "1.0.0",
+	"description": "Learn Express and MongoDB",
+	"main": "app.js",
+	"scripts": {
+		"start": "nodemon app.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Hoang Anh",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.2"
+	},
+	"devDependencies": {
+		"eslint": "^8.6.0",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-node": "^4.1.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-import": "^2.25.4",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^4.0.0",
+		"nodemon": "^2.0.15",
+		"prettier": "^2.5.1"
+	}
 }
