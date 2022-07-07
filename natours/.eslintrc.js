@@ -19,7 +19,7 @@ module.exports = {
 		'no-tabs': 0,
 		'no-empty': 1,
 		'eol-last': 0,
-		'no-undef': 1,
+		'no-undef': 2,
 		'no-unused-vars': 1,
 		'quote-props': ['error', 'consistent', { keywords: true }],
 		'no-useless-escape': 0,
