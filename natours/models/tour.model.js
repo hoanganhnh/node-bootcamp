@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const tourSchema = new mongoose.Schema(
 	{
@@ -94,6 +95,13 @@ const tourSchema = new mongoose.Schema(
 // eslint-disable-next-line func-names
 tourSchema.virtual('durationWeeks').get(function () {
 	return this.duration / 7;
+});
+
+// Document middleware: runs before .save(), .create(), .insertMany()
+// eslint-disable-next-line func-names
+tourSchema.pre('save', function (next) {
+	this.slug = slugify(this.name, { lower: true });
+	next();
 });
 
 const TourModel = mongoose.model('Tour', tourSchema);
