@@ -1,5 +1,6 @@
 const TourModel = require('../models/tour.model');
 const APITourFeatures = require('../utils/apiTourFeatures');
+const catchAsync = require('../utils/catchAsync');
 
 const aliasTopTours = (req, res, next) => {
 	req.query.limit = '5';
@@ -8,40 +9,33 @@ const aliasTopTours = (req, res, next) => {
 	next();
 };
 
-const getAllTours = async (req, res) => {
-	try {
-		// @TODO: Update check page doesnt exist
-		// if (req.query.page) {
-		// 	const page = this.query.page * 1 || 1;
-		// 	const limit = this.query.limit * 1 || 100;
-		// 	const skip = (page - 1) * limit;
-		// 	const numTours = await TourModel.countDocuments();
-		// 	if (skip >= numTours) {
-		// 		throw new Error('This page doesnt exist !');
-		// 	}
-		// }
+const getAllTours = catchAsync(async (req, res) => {
+	// @TODO: Update check page doesnt exist
+	// if (req.query.page) {
+	// 	const page = this.query.page * 1 || 1;
+	// 	const limit = this.query.limit * 1 || 100;
+	// 	const skip = (page - 1) * limit;
+	// 	const numTours = await TourModel.countDocuments();
+	// 	if (skip >= numTours) {
+	// 		throw new Error('This page doesnt exist !');
+	// 	}
+	// }
 
-		const features = new APITourFeatures(TourModel.find(), req.query)
-			.filter()
-			.sort()
-			.limitFields()
-			.paginate();
-		const tours = await features.query;
+	const features = new APITourFeatures(TourModel.find(), req.query)
+		.filter()
+		.sort()
+		.limitFields()
+		.paginate();
+	const tours = await features.query;
 
-		res.status(201).json({
-			status: 'success',
-			result: tours.length,
-			data: {
-				tour: tours,
-			},
-		});
-	} catch (error) {
-		res.status(400).json({
-			status: 'fail',
-			message: error,
-		});
-	}
-};
+	res.status(201).json({
+		status: 'success',
+		result: tours.length,
+		data: {
+			tour: tours,
+		},
+	});
+});
 
 const getTour = async (req, res) => {
 	try {
@@ -101,23 +95,17 @@ const deleteTour = async (req, res) => {
 	}
 };
 
-const createTour = async (req, res) => {
-	try {
-		const newTour = await TourModel.create(req.body);
+const createTour = catchAsync(async (req, res) => {
+	const newTour = await TourModel.create(req.body);
 
-		res.status(201).json({
-			status: 'success',
-			data: {
-				tour: newTour,
-			},
-		});
-	} catch (error) {
-		res.status(400).json({
-			status: 'fail',
-			message: error,
-		});
-	}
-};
+	res.status(201).json({
+		status: 'success',
+		data: {
+			tour: newTour,
+		},
+	});
+});
+
 /**
  *
  * @see https://www.mongodb.com/docs/manual/reference/operator/query/

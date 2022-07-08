@@ -1,6 +1,6 @@
 const globalErrorHandler = (err, req, res, next) => {
 	const error = {
-		statusCode: err.statusCode || 404,
+		statusCode: err.statusCode || 500,
 		status: err.status || 'error',
 	};
 
