@@ -186,6 +186,69 @@ const getTourStats = async (req, res) => {
 	}
 };
 
+/**
+ *
+ * Aggregation Pipeline Unwinding and Projecting
+ * @see https://www.mongodb.com/docs/manual/reference/operator/aggregation/unwind/
+ */
+const getMonthlyPlan = async (req, res) => {
+	try {
+		const year = req.params.year * 1; // 2021
+
+		const plan = await TourModel.aggregate([
+			{
+				$unwind: '$startDates',
+			},
+			{
+				$match: {
+					startDates: {
+						$gte: new Date(`${year}-01-01`),
+						$lte: new Date(`${year}-12-31`),
+					},
+				},
+			},
+			{
+				$group: {
+					_id: { $month: '$startDates' },
+					numTourStarts: { $sum: 1 },
+					tours: {
+						$push: '$name',
+					},
+				},
+			},
+			{
+				$addFields: { month: '$_id' },
+			},
+			{
+				$project: {
+					_id: 0,
+				},
+			},
+			{
+				$sort: {
+					numTourStarts: -1,
+				},
+			},
+			{
+				$limit: 6,
+			},
+		]);
+
+		res.status(201).json({
+			status: 'success',
+			result: plan.length,
+			data: {
+				plan,
+			},
+		});
+	} catch (error) {
+		res.status(400).json({
+			status: 'fail',
+			message: error,
+		});
+	}
+};
+
 module.exports = {
 	getAllTours,
 	getTour,
@@ -194,4 +257,5 @@ module.exports = {
 	deleteTour,
 	aliasTopTours,
 	getTourStats,
+	getMonthlyPlan,
 };
