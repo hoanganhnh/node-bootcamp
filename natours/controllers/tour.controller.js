@@ -118,6 +118,73 @@ const createTour = async (req, res) => {
 		});
 	}
 };
+/**
+ *
+ * @see https://www.mongodb.com/docs/manual/reference/operator/query/
+ * @see https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/
+ */
+const getTourStats = async (req, res) => {
+	try {
+		const stats = await TourModel.aggregate([
+			{
+				$match: {
+					ratingsAverage: {
+						$gte: 4.5,
+					},
+				},
+			},
+			{
+				$group: {
+					_id: {
+						$toUpper: '$difficulty',
+					},
+					num: {
+						$sum: 1,
+					},
+					numRatings: {
+						$sum: '$ratingsQuantity',
+					},
+					avgRating: {
+						$avg: '$ratingsAverage',
+					},
+					avgPrice: {
+						$avg: '$price',
+					},
+					minPrice: {
+						$min: '$price',
+					},
+					maxPrice: {
+						$max: '$price',
+					},
+				},
+			},
+			{
+				$sort: {
+					avgPrice: 1,
+				},
+			},
+			{
+				$match: {
+					_id: {
+						$ne: 'EASY',
+					},
+				},
+			},
+		]);
+
+		res.status(201).json({
+			status: 'success',
+			data: {
+				tour: stats,
+			},
+		});
+	} catch (error) {
+		res.status(400).json({
+			status: 'fail',
+			message: error,
+		});
+	}
+};
 
 module.exports = {
 	getAllTours,
@@ -126,4 +193,5 @@ module.exports = {
 	updateTour,
 	deleteTour,
 	aliasTopTours,
+	getTourStats,
 };
