@@ -21,10 +21,22 @@ if (isDev) {
 // body parser
 app.use(express.json());
 
+app.use((req, res, next) => {
+	req.requestTime = new Date().toISOString();
+	next();
+});
+
 app.get('/', (req, res) => {
 	res.status(200).send('Hello express !');
 });
 
 routes(app);
+
+app.all('*', (req, res) => {
+	res.status(404).json({
+		status: 'fail',
+		message: `Can't find ${req.originalUrl} on this server !`,
+	});
+});
 
 module.exports = app;
