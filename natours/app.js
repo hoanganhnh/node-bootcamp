@@ -3,6 +3,8 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
+const routes = require('./router');
+
 dotenv.config({ path: './config.env' });
 
 const app = express();
@@ -22,8 +24,13 @@ if (isDev) {
 	app.use(morgan('dev'));
 }
 
+// body parser
+app.use(express.json());
+
 app.get('/', (req, res) => {
 	res.status(200).send('Hello express !');
 });
+
+routes(app);
 
 module.exports = app;
