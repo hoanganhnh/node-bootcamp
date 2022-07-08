@@ -90,6 +90,12 @@ const tourSchema = new mongoose.Schema(
 	},
 );
 
+// Virtual Properties
+// eslint-disable-next-line func-names
+tourSchema.virtual('durationWeeks').get(function () {
+	return this.duration / 7;
+});
+
 const TourModel = mongoose.model('Tour', tourSchema);
 
 module.exports = TourModel;
