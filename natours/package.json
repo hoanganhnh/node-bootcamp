@@ -25,5 +25,8 @@
 		"eslint-plugin-prettier": "^4.0.0",
 		"nodemon": "^2.0.15",
 		"prettier": "^2.5.1"
+	},
+	"engines": {
+		"node": "10.x || 16.x"
 	}
 }
