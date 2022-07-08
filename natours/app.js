@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const routes = require('./router');
 const { isDev } = require('./constants');
 const connectToDB = require('./libs/connectDB');
+const AppError = require('./utils/appError');
+const { globalErrorHandler } = require('./middlewares/globalErrorHandler');
 
 dotenv.config({ path: './config.env' });
 
@@ -32,11 +34,10 @@ app.get('/', (req, res) => {
 
 routes(app);
 
-app.all('*', (req, res) => {
-	res.status(404).json({
-		status: 'fail',
-		message: `Can't find ${req.originalUrl} on this server !`,
-	});
+app.all('*', (req, res, next) => {
+	next(new AppError(`Can't find ${req.originalUrl} on this server !`, 404));
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;
