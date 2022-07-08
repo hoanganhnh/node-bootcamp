@@ -1,4 +1,5 @@
 const TourModel = require('../models/tour.model');
+const APITourFeatures = require('../utils/apiTourFeatures');
 
 const aliasTopTours = (req, res, next) => {
 	req.query.limit = '5';
@@ -9,61 +10,23 @@ const aliasTopTours = (req, res, next) => {
 
 const getAllTours = async (req, res) => {
 	try {
-		console.log(req.query);
-		// 1.A. Filtering
-		const queryObj = { ...req.query };
-		const excludeField = ['page', 'sort', 'limit', 'fields'];
-		excludeField.forEach((field) => delete queryObj[field]);
-		// 1.B. Advanced filtering
+		// @TODO: Update check page doesnt exist
+		// if (req.query.page) {
+		// 	const page = this.query.page * 1 || 1;
+		// 	const limit = this.query.limit * 1 || 100;
+		// 	const skip = (page - 1) * limit;
+		// 	const numTours = await TourModel.countDocuments();
+		// 	if (skip >= numTours) {
+		// 		throw new Error('This page doesnt exist !');
+		// 	}
+		// }
 
-		let queryStr = JSON.stringify(queryObj);
-		queryStr = queryStr.replace(
-			/\b(gte|gt|lte|lt)\b/g,
-			(match) => `$${match}`,
-		);
-		// MongoDB Comparison Query Operators: gte, gt, lte, lt
-		/**
-		 * (>) greater than - $gt
-		 * (<) less than - $lt
-		 * (>=) greater than equal to - $gte
-		 * (<= ) less than equal to - $lte
-		 */
-		// { difficulty: 'easy', duration: { gte: '5' } } --> { difficulty: 'easy', duration: { '$gte': '5' } }
-
-		// const tours = await TourModel.find().where('duration').equals(5);
-		let query = TourModel.find(JSON.parse(queryStr));
-
-		// 2. Sorting
-
-		if (req.query.sort) {
-			const sortBy = req.query.sort.split(',').join(' ');
-			query = query.sort(sortBy);
-		} else {
-			query = query.sort('-createAt');
-		}
-
-		// 3. Field limiting
-		if (req.query.fields) {
-			const fields = req.query.fields.split(',').join(' ');
-			query = query.select(fields);
-		} else {
-			query = query.select('-__v');
-		}
-
-		// 4. Pagination
-		const page = req.query.page * 1 || 1;
-		const limit = req.query.limit * 1 || 100;
-		const skip = (page - 1) * limit;
-		query = query.skip(skip).limit(limit);
-
-		if (req.query.page) {
-			const numTours = await TourModel.countDocuments();
-			if (skip >= numTours) {
-				throw new Error('This page doesnt exist !');
-			}
-		}
-
-		const tours = await query;
+		const features = new APITourFeatures(TourModel.find(), req.query)
+			.filter()
+			.sort()
+			.limitFields()
+			.paginate();
+		const tours = await features.query;
 
 		res.status(201).json({
 			status: 'success',
