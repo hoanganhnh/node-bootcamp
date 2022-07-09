@@ -21,6 +21,7 @@ module.exports = {
 		'eol-last': 0,
 		'no-undef': 2,
 		'no-unused-vars': 1,
+		'no-underscore-dangle': 0,
 		'quote-props': ['error', 'consistent', { keywords: true }],
 		'no-useless-escape': 0,
 		'import/newline-after-import': [1, { count: 1 }],
