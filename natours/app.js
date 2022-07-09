@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
 const routes = require('./router');
 const { isDev } = require('./constants');
@@ -19,6 +20,15 @@ connectToDB();
 if (isDev) {
 	app.use(morgan('dev'));
 }
+// Implementing Rate Limiting
+const limiter = rateLimit({
+	windowMs: 60 * 60 * 1000, // 60 minutes
+	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
+	message: 'Too many requests from this IP, please try again in an hour !',
+});
+app.use('/api', limiter);
 
 // body parser
 app.use(express.json());
