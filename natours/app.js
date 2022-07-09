@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const routes = require('./router');
 const { isDev } = require('./constants');
@@ -16,7 +17,10 @@ const app = express();
 // connect to mongodb
 connectToDB();
 
-//  MIDDLEWARES
+// Setting Security HTTP Headers
+app.use(helmet());
+
+//  dev logging request
 if (isDev) {
 	app.use(morgan('dev'));
 }
@@ -31,8 +35,9 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // body parser
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
 
+// test middleware
 app.use((req, res, next) => {
 	req.requestTime = new Date().toISOString();
 	next();
