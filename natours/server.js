@@ -14,3 +14,12 @@ process.on('unhandledRejection', (err) => {
 		process.exit(1);
 	});
 });
+
+process.on('uncaughtException', (err) => {
+	console.log(err.name, err.message);
+
+	server.close(() => {
+		// eslint-disable-next-line no-process-exit
+		process.exit(1);
+	});
+});
