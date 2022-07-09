@@ -44,15 +44,7 @@ const createSendToken = (user, statusCode, res) => {
 const signup = catchAsync(async (req, res) => {
 	const newUser = await UserModel.create(req.body);
 
-	const token = signToken(newUser._id);
-
-	res.status(201).json({
-		status: 'success',
-		token,
-		data: {
-			user: newUser,
-		},
-	});
+	createSendToken(newUser, 200, res);
 });
 
 const login = catchAsync(async (req, res, next) => {
@@ -70,11 +62,7 @@ const login = catchAsync(async (req, res, next) => {
 		return next(new AppError(`Incorrect email and password !`, 401));
 	}
 
-	const token = signToken(user._id);
-	return res.status(201).json({
-		status: 'success',
-		token,
-	});
+	return createSendToken(user, 200, res);
 });
 
 const forgotPassword = catchAsync(async (req, res, next) => {
@@ -121,7 +109,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
 	}
 });
 
-const resetPassword = async (req, res, next) => {
+const resetPassword = catchAsync(async (req, res, next) => {
 	// 1) Get user base on token
 	const hashedToken = crypto
 		.createHash('sha256')
@@ -147,11 +135,33 @@ const resetPassword = async (req, res, next) => {
 	// 3) Update changedPasswordAt property for the user
 	// 4) Log the user in, send JWT
 	return createSendToken(user, 200, res);
-};
+});
+
+const updatePassword = catchAsync(async (req, res, next) => {
+	// 1) Get user from collection
+	const user = await UserModel.findById(req.user.id).select('+password');
+
+	const correctPassword = await user.correctPassword(
+		req.body.passwordCurrent,
+		user.password,
+	);
+	// 2) Check if POSTed current password is correct
+	if (!correctPassword) {
+		return next(new AppError('Your current password is wrong !', 401));
+	}
+	// 3) If so, update password
+	user.password = req.body.password;
+	user.passwordConfirm = req.body.passwordConfirm;
+	await user.save();
+	//! User.findByIdAndUpdate will NOT work as intended!
+	// 4) Log user in, send JWT
+	return createSendToken(user, 200, res);
+});
 
 module.exports = {
 	signup,
 	login,
 	forgotPassword,
 	resetPassword,
+	updatePassword,
 };
