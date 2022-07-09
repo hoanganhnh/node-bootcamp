@@ -11,6 +11,7 @@ const {
 	getMonthlyPlan,
 } = require('../controllers/tour.controller');
 const protect = require('../middlewares/protect');
+const restrictTo = require('../middlewares/restrictTo');
 
 const tourRouter = express.Router();
 
@@ -21,6 +22,10 @@ tourRouter.route('/').get(getAllTours).post(protect, createTour);
 tourRouter.route('/tour-stats').get(getTourStats);
 tourRouter.route('/monthly-plan/:year').get(getMonthlyPlan);
 
-tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+tourRouter
+	.route('/:id')
+	.get(getTour)
+	.patch(protect, restrictTo('admin'), updateTour)
+	.delete(protect, restrictTo('admin'), deleteTour);
 
 module.exports = tourRouter;
