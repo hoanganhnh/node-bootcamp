@@ -1,20 +1,17 @@
 const express = require('express');
 
 const {
-	signup,
-	login,
-	forgotPassword,
-	resetPassword,
-	updatePassword,
+	getAllUsers,
+	updateMe,
+	getUserInfor,
 } = require('../controllers/user.controller');
 const protect = require('../middlewares/protect');
+const restrictTo = require('../middlewares/restrictTo');
 
 const userRouter = express.Router();
 
-userRouter.route('/signup').post(signup);
-userRouter.route('/login').post(login);
-userRouter.route('/forgotPassword').post(forgotPassword);
-userRouter.route('/resetPassword/:token').patch(resetPassword);
-userRouter.route('/updatePassword').patch(protect, updatePassword);
+userRouter.route('/').get(protect, restrictTo('admin'), getAllUsers);
+userRouter.route('/userInfor').get(protect, getUserInfor);
+userRouter.route('/updateMe').patch(protect, updateMe);
 
 module.exports = userRouter;
