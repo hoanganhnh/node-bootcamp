@@ -55,10 +55,12 @@ const login = catchAsync(async (req, res, next) => {
 	}
 
 	const user = await UserModel.findOne({ email }).select('+password');
-
+	if (!user) {
+		return next(new AppError(`User does not exist !`, 401));
+	}
 	const correct = await user.correctPassword(password, user.password);
 
-	if (!user || !correct) {
+	if (!correct) {
 		return next(new AppError(`Incorrect email and password !`, 401));
 	}
 
