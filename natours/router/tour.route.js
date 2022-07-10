@@ -10,6 +10,7 @@ const {
 	getTourStats,
 	getMonthlyPlan,
 } = require('../controllers/tour.controller');
+const { createReview } = require('../controllers/review.controller');
 const protect = require('../middlewares/protect');
 const restrictTo = require('../middlewares/restrictTo');
 
@@ -27,5 +28,9 @@ tourRouter
 	.get(getTour)
 	.patch(protect, restrictTo('admin'), updateTour)
 	.delete(protect, restrictTo('admin'), deleteTour);
+
+tourRouter
+	.route('/:tourId/reviews')
+	.post(protect, restrictTo('admin', 'user'), createReview);
 
 module.exports = tourRouter;
