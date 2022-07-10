@@ -8,7 +8,7 @@ const {
 const protect = require('../middlewares/protect');
 const restrictTo = require('../middlewares/restrictTo');
 
-const reviewRoute = express.Router();
+const reviewRoute = express.Router({ mergeParams: true });
 
 reviewRoute
 	.route('/')
