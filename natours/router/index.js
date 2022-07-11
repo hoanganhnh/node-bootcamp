@@ -7,7 +7,7 @@ function routes(app) {
 	app.use('/api/v1/tour', tourRouter);
 	app.use('/api/v1/auth', authRouter);
 	app.use('/api/v1/user', userRouter);
-	app.use('/api/v1/review', reviewRoute);
+	app.use('/api/v1/reviews', reviewRoute);
 }
 
 module.exports = routes;

@@ -10,6 +10,9 @@ const restrictTo = require('../middlewares/restrictTo');
 
 const reviewRoute = express.Router({ mergeParams: true });
 
+// GET /tour/123/reviews
+// POST /tour/123/reviews
+
 reviewRoute
 	.route('/')
 	.get(getAllReviews)
