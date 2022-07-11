@@ -59,7 +59,7 @@ const updateMe = catchAsync(async (req, res, next) => {
 });
 
 const getMe = catchAsync(async (req, res, next) => {
-	const user = await UserModel.findOne({ email: req.user.email });
+	const user = await UserModel.findById(req.user.id);
 	if (!user) {
 		return next(new AppError(`Please log in !`, 401));
 	}
@@ -80,9 +80,19 @@ const deleteMe = catchAsync(async (req, res) => {
 	});
 });
 
+const deleteUser = catchAsync(async (req, res) => {
+	await UserModel.findByIdAndDelete(req.params.id);
+
+	res.status(204).json({
+		status: 'success',
+		message: 'Delete user successfull !',
+	});
+});
+
 module.exports = {
 	getAllUsers,
 	updateMe,
 	getMe,
 	deleteMe,
+	deleteUser,
 };
