@@ -2,6 +2,7 @@ const TourModel = require('../models/tour.model');
 const APITourFeatures = require('../utils/apiTourFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const { deleteOne, updateOne, createOne } = require('../utils/handleFactory');
 
 const aliasTopTours = (req, res, next) => {
 	req.query.limit = '5';
@@ -64,53 +65,11 @@ const getTour = catchAsync(async (req, res) => {
 	});
 });
 
-const updateTour = catchAsync(async (req, res) => {
-	const { id } = req.params;
-	const tour = await TourModel.findByIdAndUpdate(id, req.body, {
-		new: true,
-		runValidators: true,
-	});
+const updateTour = updateOne(TourModel, 'Tour');
 
-	if (!tour) {
-		return new AppError(
-			`Can't find tour with that id on this server !`,
-			404,
-		);
-	}
+const deleteTour = deleteOne(TourModel, 'Tour');
 
-	return res.status(201).json({
-		status: 'success',
-		data: {
-			tour,
-		},
-	});
-});
-
-const deleteTour = catchAsync(async (req, res) => {
-	const { id } = req.params;
-	const tour = await TourModel.findByIdAndDelete(id);
-	if (!tour) {
-		return new AppError(
-			`Can't find tour with that id on this server !`,
-			404,
-		);
-	}
-	return res.status(201).json({
-		status: 'success',
-		message: 'Delete tour successfull !',
-	});
-});
-
-const createTour = catchAsync(async (req, res) => {
-	const newTour = await TourModel.create(req.body);
-
-	res.status(201).json({
-		status: 'success',
-		data: {
-			tour: newTour,
-		},
-	});
-});
+const createTour = createOne(TourModel, 'Tour');
 
 /**
  *
