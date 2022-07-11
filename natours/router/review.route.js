@@ -4,6 +4,9 @@ const {
 	getAllReviews,
 	createReview,
 	updateReview,
+	deleteReview,
+	getReview,
+	setTourUserIds,
 } = require('../controllers/review.controller');
 const protect = require('../middlewares/protect');
 const restrictTo = require('../middlewares/restrictTo');
@@ -16,10 +19,14 @@ const reviewRoute = express.Router({ mergeParams: true });
 reviewRoute
 	.route('/')
 	.get(getAllReviews)
-	.post(protect, restrictTo('admin', 'user'), createReview);
+	.post(protect, restrictTo('admin', 'user'), setTourUserIds, createReview);
+
+reviewRoute.use(protect, restrictTo('admin', 'user'));
 
 reviewRoute
-	.route('/:reviewId')
-	.patch(protect, restrictTo('admin', 'user'), updateReview);
+	.route('/:id')
+	.post(getReview)
+	.delete(deleteReview)
+	.patch(updateReview);
 
 module.exports = reviewRoute;
