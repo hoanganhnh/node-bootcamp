@@ -1,6 +1,7 @@
 const UserModel = require('../models/user.model');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const { deleteOne } = require('../utils/handleFactory');
 
 // eslint-disable-next-line no-unused-vars
 const filterObj = (obj, ...values) => {
@@ -80,14 +81,7 @@ const deleteMe = catchAsync(async (req, res) => {
 	});
 });
 
-const deleteUser = catchAsync(async (req, res) => {
-	await UserModel.findByIdAndDelete(req.params.id);
-
-	res.status(204).json({
-		status: 'success',
-		message: 'Delete user successfull !',
-	});
-});
+const deleteUser = deleteOne(UserModel, 'User');
 
 module.exports = {
 	getAllUsers,
