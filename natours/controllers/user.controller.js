@@ -1,7 +1,12 @@
 const UserModel = require('../models/user.model');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const { deleteOne } = require('../utils/handleFactory');
+const {
+	deleteOne,
+	updateOne,
+	getOne,
+	getAll,
+} = require('../utils/handleFactory');
 
 // eslint-disable-next-line no-unused-vars
 const filterObj = (obj, ...values) => {
@@ -15,17 +20,7 @@ const filterObj = (obj, ...values) => {
 	return resultObj;
 };
 
-const getAllUsers = catchAsync(async (req, res) => {
-	const users = await UserModel.find();
-
-	res.status(200).json({
-		status: 'success',
-		results: users.length,
-		data: {
-			users,
-		},
-	});
-});
+const getAllUsers = getAll(UserModel, 'User');
 
 const updateMe = catchAsync(async (req, res, next) => {
 	// 1) Create error if user POSTs password data
@@ -59,18 +54,12 @@ const updateMe = catchAsync(async (req, res, next) => {
 	});
 });
 
-const getMe = catchAsync(async (req, res, next) => {
-	const user = await UserModel.findById(req.user.id);
-	if (!user) {
-		return next(new AppError(`Please log in !`, 401));
-	}
-	return res.status(200).json({
-		status: 'success',
-		data: {
-			user,
-		},
-	});
-});
+const getMe = (req, res, next) => {
+	req.params.id = req.user.id;
+	next();
+};
+
+const getUser = getOne(UserModel, 'User');
 
 const deleteMe = catchAsync(async (req, res) => {
 	await UserModel.findByIdAndUpdate(req.user.id, { active: false });
@@ -82,11 +71,14 @@ const deleteMe = catchAsync(async (req, res) => {
 });
 
 const deleteUser = deleteOne(UserModel, 'User');
+const updateUser = updateOne(UserModel, 'User');
 
 module.exports = {
 	getAllUsers,
 	updateMe,
 	getMe,
+	getUser,
 	deleteMe,
 	deleteUser,
+	updateUser,
 };

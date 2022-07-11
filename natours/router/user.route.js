@@ -4,20 +4,25 @@ const {
 	getAllUsers,
 	updateMe,
 	getMe,
+	getUser,
 	deleteMe,
 	deleteUser,
+	updateUser,
 } = require('../controllers/user.controller');
 const protect = require('../middlewares/protect');
 const restrictTo = require('../middlewares/restrictTo');
 
 const userRouter = express.Router();
 
-userRouter.route('/').get(protect, restrictTo('admin'), getAllUsers);
-userRouter.route('/me').get(protect, getMe);
-userRouter.route('/updateMe').patch(protect, updateMe);
-userRouter.route('/deleteMe').delete(protect, deleteMe);
-userRouter
-	.route('/deleteUser/:id')
-	.delete(protect, restrictTo('admin'), deleteUser);
+userRouter.use(protect);
+
+userRouter.route('/me').get(getMe, getUser);
+userRouter.route('/updateMe').patch(updateMe);
+userRouter.route('/deleteMe').delete(deleteMe);
+
+userRouter.use(restrictTo('admin'));
+
+userRouter.route('/').get(getAllUsers);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 module.exports = userRouter;
