@@ -58,7 +58,7 @@ const updateMe = catchAsync(async (req, res, next) => {
 	});
 });
 
-const getUserInfor = catchAsync(async (req, res, next) => {
+const getMe = catchAsync(async (req, res, next) => {
 	const user = await UserModel.findOne({ email: req.user.email });
 	if (!user) {
 		return next(new AppError(`Please log in !`, 401));
@@ -83,6 +83,6 @@ const deleteMe = catchAsync(async (req, res) => {
 module.exports = {
 	getAllUsers,
 	updateMe,
-	getUserInfor,
+	getMe,
 	deleteMe,
 };
