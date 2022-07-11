@@ -1,4 +1,6 @@
 {
     "editor.formatOnSave": true,
-    "editor.formatOnPaste": true
+    "editor.formatOnPaste": true,
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.smoothScrolling": true
 }
