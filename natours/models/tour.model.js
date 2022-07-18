@@ -168,11 +168,12 @@ tourSchema.pre(/^find/, function (next) {
 // 	next();
 // });
 
+// @TODO: handle error code 40602 (Location40602) in mongodb
 // Aggregation Middleware
-tourSchema.pre('aggregate', function (next) {
-	this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-	next();
-});
+// tourSchema.pre('aggregate', function (next) {
+// 	this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+// 	next();
+// });
 
 const TourModel = mongoose.model('Tour', tourSchema);
 
