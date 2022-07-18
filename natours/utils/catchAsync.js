@@ -1,5 +1,7 @@
 module.exports = (fn) => {
-	return (req, res, next) => {
-		fn(req, res, next).catch(next);
+	return (...agrs) => {
+		const fnReturns = fn(...agrs);
+		const next = agrs[agrs.length - 1];
+		return Promise.resolve(fnReturns).catch(next);
 	};
 };
