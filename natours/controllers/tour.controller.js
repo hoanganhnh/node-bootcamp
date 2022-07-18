@@ -202,6 +202,40 @@ const getMonthlyPlan = async (req, res) => {
 	}
 };
 
+/**
+ *  @see https://www.mongodb.com/docs/manual/reference/operator/query/geoWithin/
+ *  @see https://www.mongodb.com/docs/manual/reference/operator/query/centerSphere/
+ */
+// /tours-within/:distance/center/:latlng/unit/:unit
+// /tours-within/233/center/34.111745,-118.113491/unit/mi
+const getToursWithin = catchAsync(async (req, res, next) => {
+	const { distance, latlng, unit } = req.params;
+	const [lat, lng] = latlng.split(',');
+
+	const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+	if (!lat || !lng) {
+		next(
+			new AppError(
+				'Please provide latitutr and longitude in the format lat,lng.',
+				400,
+			),
+		);
+	}
+
+	const tours = await TourModel.find({
+		startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+	});
+
+	res.status(200).json({
+		status: 'success',
+		results: tours.length,
+		data: {
+			data: tours,
+		},
+	});
+});
+
 module.exports = {
 	getAllTours,
 	getTour,
@@ -211,4 +245,5 @@ module.exports = {
 	aliasTopTours,
 	getTourStats,
 	getMonthlyPlan,
+	getToursWithin,
 };
