@@ -25,7 +25,7 @@ reviewRoute.use(protect, restrictTo('admin', 'user'));
 
 reviewRoute
 	.route('/:id')
-	.post(getReview)
+	.get(getReview)
 	.delete(deleteReview)
 	.patch(updateReview);
 
