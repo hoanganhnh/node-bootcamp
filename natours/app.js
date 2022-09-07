@@ -63,13 +63,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.get('/', (req, res) => {
-	res.status(200).render('base', {
-		tour: 'HCM city',
-		user: 'Hoang Anh',
-	});
-});
-
 routes(app);
 
 app.all('*', (req, res, next) => {
