@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const path = require('path');
 
 const routes = require('./router');
 const { isDev } = require('./constants');
@@ -19,6 +20,13 @@ const app = express();
 
 // connect to mongodb
 connectToDB();
+
+// set template views
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Setting Security HTTP Headers
 app.use(helmet());
@@ -56,7 +64,10 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-	res.status(200).send('Hello express !');
+	res.status(200).render('base', {
+		tour: 'HCM city',
+		user: 'Hoang Anh',
+	});
 });
 
 routes(app);
